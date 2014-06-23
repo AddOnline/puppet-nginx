@@ -1,0 +1,5 @@
+  <% if (defined? @denied_location) %>
+  <% Array(@denied_location).each do |location| -%>
+  location <%= location %> { deny all; }
+  <% end %>
+  <% end %>

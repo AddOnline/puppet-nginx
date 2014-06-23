@@ -8,3 +8,5 @@ server {
   <% if (defined? @www_root)  %>
   root  <%= @www_root %>;
   <% end %>
+
+  <%= scope.function_template(["nginx/vhost/_denied_location.erb"]) %>
