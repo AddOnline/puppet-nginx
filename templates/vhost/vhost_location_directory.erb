@@ -5,4 +5,6 @@
     auth_basic <%= @auth_basic  %>;
     auth_basic_user_file <%= @auth_basic_user_file  %>;
 <% end -%>
+
+    <%= scope.function_template(["nginx/vhost/_options.erb"]) %>
   }

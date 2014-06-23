@@ -1,3 +1,5 @@
   location <%= @location %> {
     return 301 <%= @redirect %>$request_uri;
+
+    <%= scope.function_template(["nginx/vhost/_options.erb"]) %>
   }

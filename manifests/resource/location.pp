@@ -18,7 +18,7 @@
 #   [*limit_except*]       - Specifies that auth requests should be enclosed within a limit_except
 #   [*auth_basic_user_file*] - auth_basic_user_file location
 #   [*auth_basic*]         - auth_basic message
-#   [*option*]             - Reserved for future use
+#   [*option*]             - Inject custom config items.
 #
 # Actions:
 #
