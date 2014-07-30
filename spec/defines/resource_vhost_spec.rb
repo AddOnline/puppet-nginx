@@ -45,4 +45,14 @@ describe 'nginx::resource::vhost', :type => :define do
     } }
     it { should contain_nginx__resource__location('www.example42.com-default').with_proxy_ssl_set_header(['example','42']) }
   end
+
+  describe 'Test default ssl proxy template' do
+    let(:params) { {
+      :proxy                => 'http://example42.com:4242',
+      :ssl                  => 'present',
+      :ssl_key               => '/example42.key',
+      :ssl_cert              => '/example42.crt',
+    } }
+    it { should contain_nginx__resource__location('www.example42.com-default').with_template_ssl_proxy('nginx/vhost/vhost_location_ssl_proxy.erb') }
+  end
 end
