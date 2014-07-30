@@ -3,22 +3,24 @@
 # This definition creates a new location entry within a virtual host
 #
 # Parameters:
-#   [*ensure*]             - Enables or disables the specified location (present|absent)
-#   [*vhost*]              - Defines the default vHost for this location entry to include with
-#   [*location*]           - Specifies the URI associated with this location entry
-#   [*www_root*]           - Specifies the location on disk for files to be read from. Cannot be set in conjunction with $proxy
-#   [*redirect*]           - Specifies a 301 redirection. You can either set proxy, www_root or redirect.
+#   [*ensure*]               - Enables or disables the specified location (present|absent)
+#   [*vhost*]                - Defines the default vHost for this location entry to include with
+#   [*location*]             - Specifies the URI associated with this location entry
+#   [*www_root*]             - Specifies the location on disk for files to be read from. Cannot be set in conjunction with $proxy
+#   [*redirect*]             - Specifies a 301 redirection. You can either set proxy, www_root or redirect.
 #                            The request_uri is automatically appended. Usage example: redirect => 'http://www.example.org'
-#   [*index_files*]        - Default index files for NGINX to read when traversing a directory
-#   [*proxy*]              - Proxy server(s) for a location to connect to. Accepts a single value, can be used in conjunction
+#   [*index_files*]          - Default index files for NGINX to read when traversing a directory
+#   [*proxy*]                - Proxy server(s) for a location to connect to. Accepts a single value, can be used in conjunction
 #                            with nginx::resource::upstream
-#   [*proxy_read_timeout*] - Override the default the proxy read timeout value of 90 seconds
-#   [*ssl*]                - Indicates whether to setup SSL bindings for this location.
-#   [*mixin_ssl*]          - Indicates whether SSL directive is to be put into the same file (only for backward compatibility)
-#   [*limit_except*]       - Specifies that auth requests should be enclosed within a limit_except
+#   [*proxy_read_timeout*]   - Override the default the proxy read timeout value of 90 seconds
+#   [*proxy_set_header*]     - Various Header Options
+#   [*proxy_ssl_set_header*] - Various Header Options for SSL
+#   [*ssl*]                  - Indicates whether to setup SSL bindings for this location.
+#   [*mixin_ssl*]            - Indicates whether SSL directive is to be put into the same file (only for backward compatibility)
+#   [*limit_except*]         - Specifies that auth requests should be enclosed within a limit_except
 #   [*auth_basic_user_file*] - auth_basic_user_file location
-#   [*auth_basic*]         - auth_basic message
-#   [*option*]             - Inject custom config items.
+#   [*auth_basic*]           - auth_basic message
+#   [*option*]               - Inject custom config items.
 #
 # Actions:
 #
@@ -32,30 +34,31 @@
 #    vhost    => 'test2.local',
 #  }
 define nginx::resource::location(
-  $ensure             = present,
-  $vhost              = undef,
-  $limit_except       = undef,
+  $ensure               = present,
+  $vhost                = undef,
+  $limit_except         = undef,
   $auth_basic_user_file = undef,
-  $auth_basic          = undef,
-  $www_root           = undef,
-  $create_www_root    = false,
-  $owner              = '',
-  $groupowner         = '',
-  $redirect           = undef,
-  $index_files        = ['index.html', 'index.htm', 'index.php'],
-  $proxy              = undef,
-  $proxy_read_timeout = '90',
-  $proxy_set_header   = ['Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'X-Forwarded-Proto $scheme' ],
-  $proxy_redirect     = undef,
-  $ssl                = false,
-  $ssl_only           = false,
-  $option             = undef,
-  $mixin_ssl          = undef,
-  $template_ssl_proxy = 'nginx/vhost/vhost_location_proxy.erb',
-  $template_proxy     = 'nginx/vhost/vhost_location_proxy.erb',
-  $template_directory = 'nginx/vhost/vhost_location_directory.erb',
-  $template_redirect  = 'nginx/vhost/vhost_location_redirect.erb',
-  $location           = $title
+  $auth_basic           = undef,
+  $www_root             = undef,
+  $create_www_root      = false,
+  $owner                = '',
+  $groupowner           = '',
+  $redirect             = undef,
+  $index_files          = ['index.html', 'index.htm', 'index.php'],
+  $proxy                = undef,
+  $proxy_read_timeout   = '90',
+  $proxy_set_header     = ['Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'X-Forwarded-Proto $scheme' ],
+  $proxy_ssl_set_header = [],
+  $proxy_redirect       = undef,
+  $ssl                  = false,
+  $ssl_only             = false,
+  $option               = undef,
+  $mixin_ssl            = undef,
+  $template_ssl_proxy   = 'nginx/vhost/vhost_location_ssl_proxy.erb',
+  $template_proxy       = 'nginx/vhost/vhost_location_proxy.erb',
+  $template_directory   = 'nginx/vhost/vhost_location_directory.erb',
+  $template_redirect    = 'nginx/vhost/vhost_location_redirect.erb',
+  $location             = $title
 ) {
   File {
     owner  => 'root',

@@ -26,4 +26,23 @@ describe 'nginx::resource::vhost', :type => :define do
     it { should contain_concat__fragment('www.example42.com+70-ssl.tmp').with_content(/location\s+\/var\s+{\s+deny\s+all;\s+}/) }
     it { should contain_concat__fragment('www.example42.com+70-ssl.tmp').with_content(/location\s+\/app\s+{\s+deny\s+all;\s+}/) }
   end
+
+  describe 'Test adding proxy header' do
+    let(:params) { {
+      :proxy            => 'http://example42.com:4242',
+      :proxy_set_header => ['example','42'],
+    } }
+    it { should contain_nginx__resource__location('www.example42.com-default').with_proxy_set_header(['example','42']) }
+  end
+
+  describe 'Test adding ssl proxy header' do
+    let(:params) { {
+      :proxy                => 'http://example42.com:4242',
+      :proxy_ssl_set_header => ['example','42'],
+      :ssl                  => 'present',
+      :ssl_key               => '/example42.key',
+      :ssl_cert              => '/example42.crt',
+    } }
+    it { should contain_nginx__resource__location('www.example42.com-default').with_proxy_ssl_set_header(['example','42']) }
+  end
 end
