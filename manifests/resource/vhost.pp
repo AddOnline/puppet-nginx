@@ -25,6 +25,9 @@
 #   [*www_root*]         - Specifies the location on disk for files to be read from. Cannot be set in conjunction with $proxy
 #   [*denied_location*]  - List of denied location for the vhost.
 #
+# [*options*]
+#   An hash of custom options to be used in templates for arbitrary settings.
+#
 # Actions:
 #
 # Requires:
@@ -75,7 +78,8 @@ define nginx::resource::vhost(
   $owner                = '',
   $groupowner           = '',
   $fastcgi              = absent,
-  $denied_location      = ''
+  $denied_location      = '',
+  $options              = ''
 ) {
 
   File {
