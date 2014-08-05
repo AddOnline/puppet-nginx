@@ -1,5 +1,5 @@
 <% if (defined? @option) -%>
-<% Array(@option).each do |key,value| -%>
+<% Array(@option).sort.map do |key,value| -%>
     <%= key %> <%= value %>;
 <% end -%>
 <% end -%>
