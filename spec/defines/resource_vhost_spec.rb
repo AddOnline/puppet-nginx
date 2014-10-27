@@ -27,6 +27,17 @@ describe 'nginx::resource::vhost', :type => :define do
     it { should contain_concat__fragment('www.example42.com+70-ssl.tmp').with_content(/location\s+\/app\s+{\s+deny\s+all;\s+}/) }
   end
 
+  describe 'Test to allow some path' do
+    let(:params) { {
+      :www_root        => '/var/www/www.example42.com',
+      :allowed_location => ['/var','/app'],
+    } }
+    it { should contain_concat__fragment('www.example42.com+01.tmp').with_content(/location\s+\/var\s+{\s+allow\s+all;\s+}/) }
+    it { should contain_concat__fragment('www.example42.com+01.tmp').with_content(/location\s+\/app\s+{\s+allow\s+all;\s+}/) }
+    it { should contain_concat__fragment('www.example42.com+70-ssl.tmp').with_content(/location\s+\/var\s+{\s+allow\s+all;\s+}/) }
+    it { should contain_concat__fragment('www.example42.com+70-ssl.tmp').with_content(/location\s+\/app\s+{\s+allow\s+all;\s+}/) }
+  end
+
   describe 'Test adding proxy header' do
     let(:params) { {
       :proxy            => 'http://example42.com:4242',

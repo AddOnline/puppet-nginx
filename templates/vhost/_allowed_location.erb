@@ -1,0 +1,5 @@
+<% if (defined? @allowed_location) -%>
+<% Array(@allowed_location).each do |location| -%>
+  location <%= location %> { allow all; }
+<% end -%>
+<% end -%>
