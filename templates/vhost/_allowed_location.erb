@@ -1,4 +1,4 @@
-<% if (defined? @allowed_location) -%>
+<% if (defined? @allowed_location) and @allowed_location != '' -%>
 <% Array(@allowed_location).each do |location| -%>
   location <%= location %> { allow all; }
 <% end -%>
