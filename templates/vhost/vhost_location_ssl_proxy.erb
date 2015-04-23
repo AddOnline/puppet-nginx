@@ -6,12 +6,12 @@
     proxy_redirect <%= @proxy_redirect %>;
 <% end -%>
 <% unless @proxy_set_header.nil? || @proxy_set_header.empty? -%>
-<%  @proxy_set_header.each do |header| -%>
+<%  Array(@proxy_set_header).each do |header| -%>
     proxy_set_header        <%= header %>;
 <%  end %>
 <% end -%>
 <% unless @proxy_ssl_set_header.nil? || @proxy_ssl_set_header.empty? -%>
-<%  @proxy_ssl_set_header.each do |header| -%>
+<%  Array(@proxy_ssl_set_header).each do |header| -%>
     proxy_set_header        <%= header %>;
 <%  end %>
 <% end -%>
