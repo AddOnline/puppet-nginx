@@ -1,0 +1,12 @@
+  location ~ <%= @location %> {
+    fastcgi_pass <%= @fpm_server%>;
+
+    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+    fastcgi_param  SCRIPT_FILENAME  <%= @fpm_script_filename %>
+    fastcgi_param  SCRIPT_NAME      $fastcgi_script_name;
+    include        fastcgi_params;
+    fastcgi_param  REMOTE_ADDR      $http_x_forwarded_for;
+<% if @bool_internal %>
+    internal;
+<% end %>
+  }

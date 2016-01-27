@@ -15,6 +15,9 @@
 #   [*proxy_read_timeout*]   - Override the default the proxy read timeout value of 90 seconds
 #   [*proxy_set_header*]     - Various Header Options
 #   [*proxy_ssl_set_header*] - Various Header Options for SSL
+#   [*fpm_server*]           - FPM server pass to fastcgi_pass
+#   [*fpm_script_filename*]  - FPM SCRIPT_FILENAME. Default to $document_root$fastcgi_script_name
+#   [*internal*]             - Set to true to add internal directive. Default: false
 #   [*ssl*]                  - Indicates whether to setup SSL bindings for this location.
 #   [*mixin_ssl*]            - Indicates whether SSL directive is to be put into the same file (only for backward compatibility)
 #   [*limit_except*]         - Specifies that auth requests should be enclosed within a limit_except
@@ -50,6 +53,9 @@ define nginx::resource::location(
   $proxy_set_header     = ['Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'X-Forwarded-Proto $scheme' ],
   $proxy_ssl_set_header = [],
   $proxy_redirect       = undef,
+  $fpm_server           = undef,
+  $fpm_script_filename  = '$document_root$fastcgi_script_name',
+  $internal             = false,
   $ssl                  = false,
   $ssl_only             = false,
   $option               = undef,
@@ -58,6 +64,7 @@ define nginx::resource::location(
   $template_proxy       = 'nginx/vhost/vhost_location_proxy.erb',
   $template_directory   = 'nginx/vhost/vhost_location_directory.erb',
   $template_redirect    = 'nginx/vhost/vhost_location_redirect.erb',
+  $template_fpm         = 'nginx/vhost/vhost_location_fpm.erb',
   $location             = $title
 ) {
   File {
@@ -96,8 +103,13 @@ define nginx::resource::location(
     if ($redirect != undef) {
       $content_real = template($template_redirect)
     } else {
-      $content_real     = template($template_directory)
-      $content_ssl_real = template($template_directory)
+      if ($fpm_script_filename != undef= {
+        $content_real     = template($template_fpm)
+        $content_ssl_real = template($template_fpm)
+      } else {
+        $content_real     = template($template_directory)
+        $content_ssl_real = template($template_directory)
+      }
     }
   }
 
@@ -105,8 +117,8 @@ define nginx::resource::location(
   if ($vhost == undef) {
     fail('Cannot create a location reference without attaching to a virtual host')
   }
-  if (($www_root == undef) and ($proxy == undef) and ($redirect == undef)) {
-    fail('Cannot create a location reference without a www_root, proxy or redirect defined')
+  if (($www_root == undef) and ($proxy == undef) and ($redirect == undef) and ($fpm_server == undef)) {
+    fail('Cannot create a location reference without a www_root, proxy,fpm_server or redirect defined')
   }
   if (($www_root != undef) and ($proxy != undef)) {
     fail('Cannot define both directory and proxy in a virtual host')
@@ -114,8 +126,17 @@ define nginx::resource::location(
   if (($www_root != undef) and ($redirect != undef)) {
     fail('Cannot define both directory and redirect in a virtual host')
   }
+  if (($www_root != undef) and ($fpm_server != undef)) {
+    fail('Cannot define both directory and fpm_server in a virtual host')
+  }
   if (($proxy != undef) and ($redirect != undef)) {
     fail('Cannot define both proxy and redirect in a virtual host')
+  }
+  if (($proxy != undef) and ($fpm_server != undef)) {
+    fail('Cannot define both proxy and fpm_server in a virtual host')
+  }
+  if (($redirect != undef) and ($fpm_server != undef)) {
+    fail('Cannot define both redirect and fpm_server in a virtual host')
   }
   if (($auth_basic_user_file != undef) and ($auth_basic == undef)) {
     fail('Cannot define auth_basic_user_file without auth_basic')
