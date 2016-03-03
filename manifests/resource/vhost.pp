@@ -29,6 +29,10 @@
 # [*options*]
 #   An hash of custom options to be used in templates for arbitrary settings.
 #
+# [*default_location*]
+#   Set to false if you doesn't want to create the root location.
+#   Default: true
+#
 # Actions:
 #
 # Requires:
@@ -81,7 +85,8 @@ define nginx::resource::vhost(
   $fastcgi              = absent,
   $denied_location      = '',
   $allowed_location     = '',
-  $options              = ''
+  $options              = '',
+  $default_location     = true
 ) {
 
   File {
@@ -97,6 +102,7 @@ define nginx::resource::vhost(
   $bool_ssl_only = any2bool($ssl_only)
   $bool_default_server = any2bool($default_server)
   $bool_ipv6_enable = any2bool($ipv6_enable)
+  $bool_default_location = any2bool(default_location)
 
   $real_owner = $owner ? {
     ''      => $nginx::process_user,
@@ -151,27 +157,29 @@ define nginx::resource::vhost(
   }
 
   # Create the default location reference for the vHost
-  nginx::resource::location {"${name}-default":
-    ensure               => $ensure,
-    vhost                => $name,
-    ssl                  => $ssl,
-    ssl_only             => $ssl_only,
-    mixin_ssl            => true,
-    location             => '/',
-    proxy                => $proxy,
-    proxy_read_timeout   => $proxy_read_timeout,
-    proxy_set_header     => $proxy_set_header,
-    proxy_ssl_set_header => $proxy_ssl_set_header,
-    proxy_redirect       => $proxy_redirect,
-    redirect             => $redirect,
-    www_root             => $www_root,
-    create_www_root      => $create_www_root,
-    owner                => $real_owner,
-    groupowner           => $real_groupowner,
-    notify               => $nginx::manage_service_autorestart,
-    template_proxy       => $template_proxy,
-    template_ssl_proxy   => $template_ssl_proxy,
-    template_directory   => $template_directory,
+  if ( $bool_default_location ) {
+    nginx::resource::location {"${name}-default":
+      ensure               => $ensure,
+      vhost                => $name,
+      ssl                  => $ssl,
+      ssl_only             => $ssl_only,
+      mixin_ssl            => true,
+      location             => '/',
+      proxy                => $proxy,
+      proxy_read_timeout   => $proxy_read_timeout,
+      proxy_set_header     => $proxy_set_header,
+      proxy_ssl_set_header => $proxy_ssl_set_header,
+      proxy_redirect       => $proxy_redirect,
+      redirect             => $redirect,
+      www_root             => $www_root,
+      create_www_root      => $create_www_root,
+      owner                => $real_owner,
+      groupowner           => $real_groupowner,
+      notify               => $nginx::manage_service_autorestart,
+      template_proxy       => $template_proxy,
+      template_ssl_proxy   => $template_ssl_proxy,
+      template_directory   => $template_directory,
+    }
   }
 
   # Use the File Fragment Pattern to construct the configuration files.
