@@ -102,7 +102,7 @@ define nginx::resource::vhost(
   $bool_ssl_only = any2bool($ssl_only)
   $bool_default_server = any2bool($default_server)
   $bool_ipv6_enable = any2bool($ipv6_enable)
-  $bool_default_location = any2bool(default_location)
+  $bool_default_location = any2bool($default_location)
 
   $real_owner = $owner ? {
     ''      => $nginx::process_user,
