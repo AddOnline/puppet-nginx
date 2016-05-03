@@ -33,6 +33,10 @@
 #   Set to false if you doesn't want to create the root location.
 #   Default: true
 #
+# [*default_location_order*]
+#   The default location (/) contat order.
+#   Default: ''
+#
 # Actions:
 #
 # Requires:
@@ -47,46 +51,47 @@
 #    ssl_key  => '/tmp/server.pem',
 #  }
 define nginx::resource::vhost(
-  $ensure               = present,
-  $listen_ip            = '*',
-  $listen_port          = '80',
-  $ssl_listen_ip        = '*',
-  $ssl_listen_port      = '443',
-  $ipv6_enable          = false,
-  $ipv6_listen_ip       = '::',
-  $ipv6_listen_port     = '80',
-  $default_server       = false,
-  $server_name          = $name,
-  $ssl                  = absent,
-  $ssl_only             = false,
-  $ssl_cert             = undef,
-  $ssl_client_cert      = undef,
-  $ssl_verify_client    = undef,
-  $ssl_key              = undef,
-  $proxy                = undef,
-  $proxy_read_timeout   = '90',
-  $proxy_set_header     = undef,
-  $proxy_ssl_set_header = undef,
-  $proxy_redirect       = undef,
-  $redirect             = undef,
-  $index_files          = ['index.html', 'index.htm', 'index.php'],
-  $template_header      = 'nginx/vhost/vhost_header.erb',
-  $template_fastcgi     = 'nginx/vhost/vhost_fastcgi.erb',
-  $template_footer      = 'nginx/vhost/vhost_footer.erb',
-  $template_ssl_header  = 'nginx/vhost/vhost_ssl_header.erb',
-  $template_ssl_footer  = 'nginx/vhost/vhost_footer.erb',
-  $template_ssl_proxy   = 'nginx/vhost/vhost_location_ssl_proxy.erb',
-  $template_proxy       = 'nginx/vhost/vhost_location_proxy.erb',
-  $template_directory   = 'nginx/vhost/vhost_location_directory.erb',
-  $www_root             = undef,
-  $create_www_root      = false,
-  $owner                = '',
-  $groupowner           = '',
-  $fastcgi              = absent,
-  $denied_location      = '',
-  $allowed_location     = '',
-  $options              = '',
-  $default_location     = true
+  $ensure                 = present,
+  $listen_ip              = '*',
+  $listen_port            = '80',
+  $ssl_listen_ip          = '*',
+  $ssl_listen_port        = '443',
+  $ipv6_enable            = false,
+  $ipv6_listen_ip         = '::',
+  $ipv6_listen_port       = '80',
+  $default_server         = false,
+  $server_name            = $name,
+  $ssl                    = absent,
+  $ssl_only               = false,
+  $ssl_cert               = undef,
+  $ssl_client_cert        = undef,
+  $ssl_verify_client      = undef,
+  $ssl_key                = undef,
+  $proxy                  = undef,
+  $proxy_read_timeout     = '90',
+  $proxy_set_header       = undef,
+  $proxy_ssl_set_header   = undef,
+  $proxy_redirect         = undef,
+  $redirect               = undef,
+  $index_files            = ['index.html', 'index.htm', 'index.php'],
+  $template_header        = 'nginx/vhost/vhost_header.erb',
+  $template_fastcgi       = 'nginx/vhost/vhost_fastcgi.erb',
+  $template_footer        = 'nginx/vhost/vhost_footer.erb',
+  $template_ssl_header    = 'nginx/vhost/vhost_ssl_header.erb',
+  $template_ssl_footer    = 'nginx/vhost/vhost_footer.erb',
+  $template_ssl_proxy     = 'nginx/vhost/vhost_location_ssl_proxy.erb',
+  $template_proxy         = 'nginx/vhost/vhost_location_proxy.erb',
+  $template_directory     = 'nginx/vhost/vhost_location_directory.erb',
+  $www_root               = undef,
+  $create_www_root        = false,
+  $owner                  = '',
+  $groupowner             = '',
+  $fastcgi                = absent,
+  $denied_location        = '',
+  $allowed_location       = '',
+  $options                = '',
+  $default_location       = true,
+  $default_location_order = '',
 ) {
 
   File {
@@ -179,6 +184,7 @@ define nginx::resource::vhost(
       template_proxy       => $template_proxy,
       template_ssl_proxy   => $template_ssl_proxy,
       template_directory   => $template_directory,
+      order                => $default_location_order,
     }
   }
 
