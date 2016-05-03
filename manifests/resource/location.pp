@@ -24,6 +24,9 @@
 #   [*auth_basic_user_file*] - auth_basic_user_file location
 #   [*auth_basic*]           - auth_basic message
 #   [*option*]               - Inject custom config items.
+#   [*options*]              - Same as [*option*] but with an s for unification with nginx::resource::vhost.
+#   [*order*]                - Contact default location order (Default: 50)
+#   [*ssl_order*]            - Contact default ssl location order (Default: [*order*] + 30
 #
 # Actions:
 #
@@ -65,6 +68,8 @@ define nginx::resource::location(
   $template_directory   = 'nginx/vhost/vhost_location_directory.erb',
   $template_redirect    = 'nginx/vhost/vhost_location_redirect.erb',
   $template_fpm         = 'nginx/vhost/vhost_location_fpm.erb',
+  $order                = '',
+  $ssl_order            = '',
   $location             = $title
 ) {
   File {
@@ -76,6 +81,16 @@ define nginx::resource::location(
 
   $bool_create_www_root = any2bool($create_www_root)
   $bool_ssl_only = any2bool($ssl_only)
+
+  $manage_order = $order ? {
+    ''      => 50,
+    default => $order
+  }
+  $tmp_ssl_order = $manage_order + 30
+  $manage_ssl_order = $ssl_order ? {
+    ''      => $tmp_ssl_order,
+    default => $ssl_order,
+  }
 
   $real_owner = $owner ? {
     ''      => $nginx::config_file_owner,
@@ -158,7 +173,7 @@ define nginx::resource::location(
   if $bool_ssl_only != true {
     concat::fragment { "${vhost}+50-${location}.tmp":
       ensure  => $ensure_real,
-      order   => '50',
+      order   => $manage_order,
       content => $content_real,
       target  => $file_real,
     }
@@ -168,7 +183,7 @@ define nginx::resource::location(
     ## Only create SSL Specific locations if $ssl is true.
     concat::fragment { "${vhost}+80-ssl-${location}.tmp":
       ensure  => $ssl,
-      order   => '80',
+      order   => $manage_ssl_order,
       content => $content_ssl_real,
       target  => $file_real,
     }
