@@ -117,6 +117,7 @@ define nginx::resource::location(
   } else {
     if ($redirect != undef) {
       $content_real = template($template_redirect)
+      $content_ssl_real = template($template_redirect)
     } else {
       if ($fpm_server != undef) {
         $content_real     = template($template_fpm)
