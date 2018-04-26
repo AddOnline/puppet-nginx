@@ -411,6 +411,7 @@ class nginx (
     enable     => $nginx::manage_service_enable,
     hasstatus  => $nginx::service_status,
     hasrestart => $nginx::service_restart,
+    restart    => '/etc/init.d/nginx reload',
     pattern    => $nginx::process,
     require    => Package['nginx'],
   }
