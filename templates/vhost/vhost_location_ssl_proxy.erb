@@ -15,6 +15,24 @@
     proxy_set_header        <%= header %>;
 <%  end %>
 <% end -%>
+<% unless @proxy_hide_header.nil? || @proxy_hide_header.empty? -%>
+<% if @proxy_hide_header.is_a? Array %> 
+<%  @proxy_hide_header.each do |header| -%>
+    proxy_hide_header       <%= header %>;
+<%  end %>
+<%  else %>
+    proxy_hide_header       <%= @proxy_hide_header %>;
+<% end -%>
+<% end -%>
+<% unless @proxy_ssl_hide_header.nil? || @proxy_ssl_hide_header.empty? -%>
+<% if @proxy_ssl_hide_header.is_a? Array %> 
+<%  @proxy_ssl_hide_header.each do |header| -%>
+    proxy_hide_header       <%= header %>;
+<%  end %>
+<%  else %>
+    proxy_hide_header       <%= @proxy_ssl_hide_header %>;
+<% end -%>
+<% end -%>
 <% unless @limit_except.nil? || @limit_except.empty? -%>
     limit_except <%= @limit_except %> {
       auth_basic <%= @auth_basic  %>;
